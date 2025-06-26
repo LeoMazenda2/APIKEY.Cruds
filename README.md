@@ -5,7 +5,6 @@ Este repositório contém uma solução base de microsserviços para gestão de 
 
 - **API RESTful** em .NET 8  
   - CRUD de Clientes e Carros  
-  - Relacionamento 1:N (um Cliente pode ter vários Carros)  
   - Entity Framework Core com SQL Server  
   - Swagger (OpenAPI) para documentação e testes  
 
