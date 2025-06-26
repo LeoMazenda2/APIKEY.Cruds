@@ -33,7 +33,8 @@ Este repositório contém uma solução completa de microsserviços para gestão
    git clone https://github.com/SEU_USUARIO/APIKEY.Crudes.git
    cd APIKEY.Crudes
 
-1. **O Container no docker**
+1. **Container em docker**
+- Basta rodar o comando a baixo 
    ```bash 
    docker-compose up --build -d
 
