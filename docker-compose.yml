@@ -12,21 +12,28 @@ services:
     volumes:
       - sqlserver_data:/var/opt/mssql
 
-  # carros-api:
-  #   build:
-  #     context: ./CarClientApi
-  #   ports:
-  #     - "5000:80"
-  #   depends_on:
-  #     - sqlserver
+  apikey.crudes:
+    build:
+      context: ./APIKEY.Crudes
+    container_name: apikey-crudes
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=crudesDb;User=sa;Password=LvSagrado@12345;TrustServerCertificate=True
+    ports:
+      - "5000:80"
+    depends_on:
+      - sqlserver
 
-  # carros-gateway:
-  #   build:
-  #     context: ./CarrosGateway
-  #   ports:
-  #     - "6000:80"
-  #   depends_on:
-  #     - carros-api
+  apigateway:
+    build:
+      context: ./APIGateway
+    container_name: apigateway
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "7071:80"
+    depends_on:
+      - apikey.crudes
 
 volumes:
   sqlserver_data:
