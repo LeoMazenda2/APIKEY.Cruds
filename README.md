@@ -26,7 +26,18 @@ Este repositório contém uma solução completa de microsserviços para gestão
     - Gateway Ocelot → `6000`  
 
 ---
+## ⚙️ Como Rodar
 
+1. **Clone o repositório**  
+   ```bash
+   git clone https://github.com/SEU_USUARIO/APIKEY.Crudes.git
+   cd APIKEY.Crudes
+
+1. **O Container no docker**
+   ```bash 
+   docker-compose up --build -d
+
+---
 ## 🛠️ Tecnologias
 - [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)  
 - [Entity Framework Core](https://docs.microsoft.com/ef/core)  
