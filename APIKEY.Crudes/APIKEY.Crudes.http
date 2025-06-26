@@ -1,0 +1,6 @@
+@APIKEY.Crudes_HostAddress = http://localhost:5062
+
+GET {{APIKEY.Crudes_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

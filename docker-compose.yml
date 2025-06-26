@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver-api
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=LvSagrado@12345
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+
+  # carros-api:
+  #   build:
+  #     context: ./CarClientApi
+  #   ports:
+  #     - "5000:80"
+  #   depends_on:
+  #     - sqlserver
+
+  # carros-gateway:
+  #   build:
+  #     context: ./CarrosGateway
+  #   ports:
+  #     - "6000:80"
+  #   depends_on:
+  #     - carros-api
+
+volumes:
+  sqlserver_data:
