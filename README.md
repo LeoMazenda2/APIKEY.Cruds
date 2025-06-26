@@ -1,7 +1,7 @@
 # 🚀 API de Clientes e Carros com Gateway Ocelot
 
 ## 🔎 Descrição do Projeto
-Este repositório contém uma solução completa de microsserviços para gestão de **Clientes** e **Carros**, composta por:
+Este repositório contém uma solução base de microsserviços para gestão de **Clientes** e **Carros**, composta por:
 
 - **API RESTful** em .NET 8  
   - CRUD de Clientes e Carros  
