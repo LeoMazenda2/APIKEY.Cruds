@@ -3,8 +3,13 @@ using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Adiciona Ocelot
-builder.Services.AddOcelot();
+// Carrega sempre o arquivo ocelot.json
+var configuration = new ConfigurationBuilder()
+    .SetBasePath(builder.Environment.ContentRootPath)
+    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
+    .Build();
+
+builder.Services.AddOcelot(configuration);
 
 // Swagger para documentação do gateway (opcional, mas útil para testes)
 builder.Services.AddEndpointsApiExplorer();

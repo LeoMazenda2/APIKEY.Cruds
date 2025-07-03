@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.14.36212.18 d17.14
+VisualStudioVersion = 17.14.36212.18
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIKEY.Crudes", "APIKEY.Crudes\APIKEY.Crudes.csproj", "{7F72FE6F-4A9D-4CA9-B70C-6C7A3228D04D}"
 EndProject
@@ -11,6 +11,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Itens de Solução", "Itens
 	ProjectSection(SolutionItems) = preProject
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Getway", "Getway", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Microservices", "Microservices", "{9C9926DF-FF64-4832-8D11-B1701378F21F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APIKey.Livraria", "APIKey.Livraria\APIKey.Livraria.csproj", "{4BC0F5C4-1FC5-4D62-805A-FE908EB7EBBF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +32,18 @@ Global
 		{0904A8EC-F6E9-420C-A7EA-E1DE93CF30A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0904A8EC-F6E9-420C-A7EA-E1DE93CF30A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0904A8EC-F6E9-420C-A7EA-E1DE93CF30A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4BC0F5C4-1FC5-4D62-805A-FE908EB7EBBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4BC0F5C4-1FC5-4D62-805A-FE908EB7EBBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4BC0F5C4-1FC5-4D62-805A-FE908EB7EBBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4BC0F5C4-1FC5-4D62-805A-FE908EB7EBBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7F72FE6F-4A9D-4CA9-B70C-6C7A3228D04D} = {9C9926DF-FF64-4832-8D11-B1701378F21F}
+		{0904A8EC-F6E9-420C-A7EA-E1DE93CF30A1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{4BC0F5C4-1FC5-4D62-805A-FE908EB7EBBF} = {9C9926DF-FF64-4832-8D11-B1701378F21F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {50687539-AF38-4C68-BFF5-2CC34098C541}
