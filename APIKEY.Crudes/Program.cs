@@ -1,9 +1,21 @@
+using API.Comum.Provider.Implementations;
+using API.Comum.Provider.Interfaces;
 using APIKEY.Crudes.Data;
 using APIKEY.Crudes.Repositories.Implementations;
 using APIKEY.Crudes.Repositories.Interfaces;
+using APIKEY.Crudes.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var azureConfig = builder.Configuration.GetSection("AzureTable");
+builder.Services.AddSingleton<IApiKeyProvider>(
+    _ => new AzuriteApiKeyProvider(
+        azureConfig["ConnectionString"],
+        azureConfig["TableName"]
+    )
+);
+builder.Services.AddScoped<ApiKeyService>();
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
