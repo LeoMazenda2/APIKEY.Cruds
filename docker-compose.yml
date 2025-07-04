@@ -12,28 +12,16 @@ services:
     volumes:
       - sqlserver_data:/var/opt/mssql
 
-  apikey.crudes:
-    build:
-      context: ./APIKEY.Crudes
-    container_name: apikey-crudes
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=crudesDb;User=sa;Password=LvSagrado@12345;TrustServerCertificate=True
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite
+    container_name: azurite
     ports:
-      - "5000:80"
-    depends_on:
-      - sqlserver
-
-  apigateway:
-    build:
-      context: ./APIGateway
-    container_name: apigateway
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    ports:
-      - "7071:80"
-    depends_on:
-      - apikey.crudes
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - ./azurite_data:/data
+    command: "azurite --tableHost 0.0.0.0 --location /data --debug /data/debug.log"
 
 volumes:
   sqlserver_data:
