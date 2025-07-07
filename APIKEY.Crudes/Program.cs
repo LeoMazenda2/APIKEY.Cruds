@@ -4,18 +4,15 @@ using APIKEY.Crudes.Data;
 using APIKEY.Crudes.Repositories.Implementations;
 using APIKEY.Crudes.Repositories.Interfaces;
 using APIKEY.Crudes.Services;
+using APIKEY.Crudes.Services.Interfaces;
+using Azure.Data.Tables;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var azureConfig = builder.Configuration.GetSection("AzureTable");
-builder.Services.AddSingleton<IApiKeyProvider>(
-    _ => new AzuriteApiKeyProvider(
-        azureConfig["ConnectionString"],
-        azureConfig["TableName"]
-    )
-);
-builder.Services.AddScoped<ApiKeyService>();
+
+builder.Services.AddSingleton<TableServiceClient>(_ =>
+    new TableServiceClient(builder.Configuration.GetSection("AzureTable")["ConnectionString"]));
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -23,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 builder.Services.AddScoped<ICarroRepository, CarroRepository>();
+
+builder.Services.AddScoped<IApiKeyProvider, ApiKeyProvider>();
+builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
 
 
 builder.Services.AddControllers();

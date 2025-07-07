@@ -1,19 +1,16 @@
-using API.Comum.Provider.Implementations;
-using API.Comum.Provider.Interfaces;
-using APIKEY.Crudes.Services;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
 var azureConfig = builder.Configuration.GetSection("AzureTable");
-builder.Services.AddSingleton<IApiKeyProvider>(
-    _ => new AzuriteApiKeyProvider(
-        azureConfig["ConnectionString"],
-        azureConfig["TableName"]
-    )
-);
-builder.Services.AddScoped<ApiKeyService>();
+//builder.Services.AddSingleton<IApiKeyProvider>(
+//    _ => new AzuriteApiKeyProvider(
+//        azureConfig["ConnectionString"],
+//        azureConfig["TableName"]
+//    )
+//);
+//builder.Services.AddScoped<ApiKeyService>();
 
 // Carrega sempre o arquivo ocelot.json
 var configuration = new ConfigurationBuilder()

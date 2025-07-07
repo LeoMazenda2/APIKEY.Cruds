@@ -1,5 +1,4 @@
-﻿using APIKEY.Crudes.Models;
-using APIKEY.Crudes.Services;
+﻿using APIKEY.Crudes.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace APIKEY.Crudes.Controllers;
@@ -8,22 +7,24 @@ namespace APIKEY.Crudes.Controllers;
 [ApiController]
 public class ApiKeyController : ControllerBase
 {
-    private readonly ApiKeyService _service;
+    private readonly IApiKeyService _service;
+    public ApiKeyController(IApiKeyService service) => _service = service;
 
-    public ApiKeyController(ApiKeyService service)
+    [HttpGet("all")]
+    public async Task<IActionResult> GetAll()
     {
-        _service = service;
+        var apiKeys = await _service.GetAllAsync();
+        return Ok(apiKeys);
     }
 
-    [HttpPost("generate")]
-    public async Task<IActionResult> Generate([FromBody] ApiKeyRequest request)
+    [HttpPost]
+    public async Task<ActionResult<CreateApiKeyResponse>> Post(CreateApiKeyRequest req)
     {
-        var apiKey = await _service.GenerateApiKeyAsync(
-            request.LicenseKey,
-            request.CreatedBy,
-            request.Remarks,
-            request.ValidUntil
-        );
-        return Ok(new { ApiKey = apiKey });
+        var dto = await _service.GenerateAsync(req.LicenseXd, req.Email, req.ValidUntil);
+        return Ok(new CreateApiKeyResponse(dto.LicenseXd, dto.apiKey, dto.Token, dto.ValidUntil));
     }
+
+    public record CreateApiKeyRequest(string LicenseXd, string Email, DateTimeOffset ValidUntil);
+    public record CreateApiKeyResponse(string LicenseXd, string apiKey, string Token, DateTimeOffset ValidUntil);
+
 }
