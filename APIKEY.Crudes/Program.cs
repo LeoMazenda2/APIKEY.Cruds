@@ -10,7 +10,6 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
 builder.Services.AddSingleton<TableServiceClient>(_ =>
     new TableServiceClient(builder.Configuration.GetSection("AzureTable")["ConnectionString"]));
 
@@ -18,12 +17,9 @@ builder.Services.AddSingleton<TableServiceClient>(_ =>
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
-builder.Services.AddScoped<ICarroRepository, CarroRepository>();
-
 builder.Services.AddScoped<IApiKeyProvider, ApiKeyProvider>();
 builder.Services.AddScoped<IApiKeyService, ApiKeyService>();
-
+builder.Services.AddScoped<IClienteRepository, ClienteRepository>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

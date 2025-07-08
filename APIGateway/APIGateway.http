@@ -1,4 +1,4 @@
-@APIGateway_HostAddress = http://localhost:5025
+@APIGateway_HostAddress = http://localhost:5222
 
 GET {{APIGateway_HostAddress}}/weatherforecast/
 Accept: application/json

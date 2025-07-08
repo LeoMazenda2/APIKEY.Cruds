@@ -12,11 +12,4 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\API.Comum\API.Comum.csproj" />
-    <ProjectReference Include="..\APIKEY.Crudes\APIKEY.Crudes.csproj" />
-  </ItemGroup>
-
-  <ProjectExtensions><VisualStudio><UserProperties ocelot_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
-
 </Project>

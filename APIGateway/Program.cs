@@ -1,39 +1,30 @@
+using APIGateway;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var azureConfig = builder.Configuration.GetSection("AzureTable");
-//builder.Services.AddSingleton<IApiKeyProvider>(
-//    _ => new AzuriteApiKeyProvider(
-//        azureConfig["ConnectionString"],
-//        azureConfig["TableName"]
-//    )
-//);
-//builder.Services.AddScoped<ApiKeyService>();
-
-// Carrega sempre o arquivo ocelot.json
-var configuration = new ConfigurationBuilder()
-    .SetBasePath(builder.Environment.ContentRootPath)
-    .AddJsonFile("ocelot.json", optional: false, reloadOnChange: true)
-    .Build();
-
-builder.Services.AddOcelot(configuration);
-
-// Swagger para documentação do gateway (opcional, mas útil para testes)
+// Add services to the container.
+// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
+builder.Services.AddOcelot(builder.Configuration);
+
 var app = builder.Build();
 
-// Middleware do Swagger (apenas em desenvolvimento)
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-// Ocelot deve ser o último middleware antes do Run
-await app.UseOcelot();
+app.UseHttpsRedirection();
 
+// Middleware de API Key antes do Ocelot
+app.UseMiddleware<APIGateway.ApiKeyMiddlewareValidations>();
+
+app.UseOcelot().Wait();
 app.Run();

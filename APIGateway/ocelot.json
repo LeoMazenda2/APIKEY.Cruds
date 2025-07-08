@@ -34,10 +34,10 @@
         }
       ],
       "UpstreamPathTemplate": "/gateway/weatherforecast",
-      "UpstreamHttpMethod": [ "GET"]
+      "UpstreamHttpMethod": [ "GET" ]
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "https://localhost:7225"
+    "BaseUrl": "https://localhost:7000"
   }
 }
