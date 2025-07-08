@@ -10,6 +10,18 @@ public class ApiKeyMiddlewareValidations
     private const string APIKEY = "X-API-KEY";
     //private const string TOKEN = "X-TOKEN";
 
+    private static readonly string[] WhitelistPaths = new[]
+    {
+        "/api/publica",
+        "/api/health"
+    };
+
+    private static readonly string[] WhitelistHosts = new[]
+    {
+        "sxsoba.com",
+        "localhost:4200"
+    };
+
     public ApiKeyMiddlewareValidations(RequestDelegate next, IApiKeyProvider apiKeyProvider)
     {
         _next = next;
@@ -18,14 +30,28 @@ public class ApiKeyMiddlewareValidations
 
     public async Task InvokeAsync(HttpContext context)
     {
+        var hostHeader = context.Request.Headers.Host.ToString().ToLowerInvariant();
+        var originHeader = context.Request.Headers.Origin.ToString().ToLowerInvariant();
+
+        if (WhitelistHosts.Any(h => hostHeader.Contains(h) || originHeader.Contains(h)))
+        {
+            await _next(context);
+            return;
+        }
+
+        var path = context.Request.Path.Value?.ToLowerInvariant();
+        if (path != null && WhitelistPaths.Any(p => path.StartsWith(p.ToLowerInvariant())))
+        {
+            await _next(context);
+            return;
+        }
+
         if (!context.Request.Headers.TryGetValue(APIKEY, out var extractedApiKey))
         {
             context.Response.StatusCode = 401;
             await context.Response.WriteAsync("API Key ausente.");
             return;
         }
-
-        // Busca a entidade usando a API Key original (o provider calcula o hash)
         var entity = await _apiKeyProvider.FindByApiKeyAsync(extractedApiKey);
 
         var validation = ApiKeyValidator.Validate(entity);
