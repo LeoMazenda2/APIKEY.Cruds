@@ -1,3 +1,5 @@
+using API.Comum.Provider.Implementations;
+using API.Comum.Provider.Interfaces;
 using APIGateway;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
@@ -12,6 +14,8 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 builder.Services.AddOcelot(builder.Configuration);
 
+builder.Services.AddSingleton<IApiKeyProvider, ApiKeyProvider>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -24,7 +28,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 // Middleware de API Key antes do Ocelot
-app.UseMiddleware<APIGateway.ApiKeyMiddlewareValidations>();
+app.UseMiddleware<ApiKeyMiddlewareValidations>();
 
 app.UseOcelot().Wait();
 app.Run();

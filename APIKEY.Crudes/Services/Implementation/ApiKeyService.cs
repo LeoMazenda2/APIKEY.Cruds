@@ -1,9 +1,9 @@
 ﻿using API.Comum.Models;
 using API.Comum.Provider.Interfaces;
+using API.Comum.Utils;
 using APIKEY.Crudes.DTOs;
 using APIKEY.Crudes.Services.Interfaces;
 using System.Security.Cryptography;
-using System.Text;
 
 namespace APIKEY.Crudes.Services
 {
@@ -17,12 +17,21 @@ namespace APIKEY.Crudes.Services
         {
             return await _porovider.GetAllAsync();
         }
-        public async Task<ApiKeyDto> GenerateAsync(string licenseXd, string email, DateTimeOffset validUntil)
+
+        public async Task<ApiKeyDto> GenerateAsync(string licenseXd, string email,DateTimeOffset validUntil)
         {
-            string apiKey = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)); // te Api Key
-            string apiKeyId = Guid.NewGuid().ToString("N"); // ID to Api Key 
-            string hash = ComputeSha256(apiKey); // api key hash 
-            string token = Guid.NewGuid().ToString("N"); // to generete token
+            var buffer = RandomNumberGenerator.GetBytes(32);
+
+            var apiKey = Convert.ToBase64String(buffer)
+                .Replace("=", "")
+                .Replace("+", "")
+                .Replace("/", "");
+
+            string apiKeyId = Guid.NewGuid().ToString("N");
+
+            string hash = SecurityUtils.ComputeSha256(apiKey);
+
+            string token = Guid.NewGuid().ToString("N");
 
             var entity = new ApiKeyEntity
             {
@@ -38,12 +47,12 @@ namespace APIKEY.Crudes.Services
 
             await _porovider.AddAsync(entity);
 
-            return new ApiKeyDto(licenseXd, apiKeyId, apiKey, token, validUntil, entity.CreatedAt);
+            return new ApiKeyDto(licenseXd, apiKey, token, validUntil);
         }
 
-        public async Task<bool> ValidateAsync(string licenseId, string plainKey)
+        public async Task<bool> ValidateAsync(string licenseId, string apiKey)
         {
-            string hash = ComputeSha256(plainKey);
+            string hash = SecurityUtils.ComputeSha256(apiKey);
             var entity = await _porovider.FindByHashAsync(licenseId, hash);
             return entity is not null && entity.IsActive && entity.ValidUntil > DateTimeOffset.UtcNow;
         }
@@ -54,13 +63,6 @@ namespace APIKEY.Crudes.Services
             if (entity is null) return;
             entity.IsActive = false;
             await _porovider.UpdateAsync(entity);
-        }
-
-        private static string ComputeSha256(string input)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = sha256.ComputeHash(Encoding.UTF8.GetBytes(input));
-            return Convert.ToHexString(bytes);
-        }
+        }      
     }
 }

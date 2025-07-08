@@ -1,46 +1,79 @@
 ﻿using API.Comum.Models;
 using API.Comum.Provider.Interfaces;
+using API.Comum.Utils;
 using Azure.Data.Tables;
+using Microsoft.Extensions.Configuration;
 
 namespace API.Comum.Provider.Implementations;
 
 public sealed class ApiKeyProvider : IApiKeyProvider
 {
-    private const string TableName = "XDSobaApiKeys";
-    private readonly TableClient _table;
+    private readonly TableClient _tableClient;
 
-    public ApiKeyProvider(TableServiceClient serviceClient)
+    public ApiKeyProvider(IConfiguration configuration)
     {
-        _table = serviceClient.GetTableClient(TableName);
-        _table.CreateIfNotExists();
+        var connectionString = configuration["AzureTable:ConnectionString"];
+        var tableName = configuration["AzureTable:TableName"];
+        _tableClient = new TableClient(connectionString, tableName);
+        _tableClient.CreateIfNotExists();
     }
 
     public async Task<IEnumerable<ApiKeyEntity>> GetAllAsync()
     {
-        var apiKeys = new List<ApiKeyEntity>();
-        await foreach (var entity in _table.QueryAsync<ApiKeyEntity>())
+        var entities = _tableClient.QueryAsync<ApiKeyEntity>();
+        var result = new List<ApiKeyEntity>();
+        await foreach (var entity in entities)
         {
-            apiKeys.Add(entity);
+            result.Add(entity);
         }
-        return apiKeys;
+        return result;
     }
 
     public async Task<ApiKeyEntity?> GetAsync(string licenseId, string keyId)
     {
-        var response = await _table.GetEntityIfExistsAsync<ApiKeyEntity>(licenseId, keyId);
-        return response.HasValue ? response.Value : null;
+        try
+        {
+            var response = await _tableClient.GetEntityAsync<ApiKeyEntity>(licenseId, keyId);
+            return response.Value;
+        }
+        catch (Azure.RequestFailedException)
+        {
+            return null;
+        }
     }
+
     public async Task<ApiKeyEntity?> FindByHashAsync(string licenseId, string sha256Hash)
     {
-        var filter = TableClient.CreateQueryFilter($"PartitionKey eq {licenseId} and Sha256Hash eq {sha256Hash} and IsActive eq true");
-        await foreach (var entity in _table.QueryAsync<ApiKeyEntity>(filter))
+        var query = _tableClient.QueryAsync<ApiKeyEntity>(e =>
+            e.PartitionKey == licenseId && e.ApiSha256Hash == sha256Hash);
+
+        await foreach (var entity in query)
         {
             return entity;
         }
         return null;
     }
 
-    public async Task AddAsync(ApiKeyEntity entity) => await _table.AddEntityAsync(entity);
+    public async Task AddAsync(ApiKeyEntity entity)
+    {
+        await _tableClient.AddEntityAsync(entity);
+    }
 
-    public async Task UpdateAsync(ApiKeyEntity entity) => await _table.UpdateEntityAsync(entity, entity.ETag, TableUpdateMode.Replace);
+    public async Task UpdateAsync(ApiKeyEntity entity)
+    {
+        await _tableClient.UpdateEntityAsync(entity, entity.ETag, TableUpdateMode.Replace);
+    }
+
+    public async Task<ApiKeyEntity?> FindByApiKeyAsync(string apiKey)
+    {
+        var hash = SecurityUtils.ComputeSha256(apiKey);
+
+        var query = _tableClient.QueryAsync<ApiKeyEntity>(e => e.ApiSha256Hash == hash);
+
+        await foreach (var entity in query)
+        {
+            return entity;
+        }
+        return null;
+    }
 }
